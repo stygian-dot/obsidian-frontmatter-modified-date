@@ -3,7 +3,8 @@ import FrontmatterModified from './main'
 import { unitOfTime } from 'moment'
 
 export interface FrontmatterModifiedSettings {
-  frontmatterProperty: string;
+  modifiedDateProperty: string;
+  historyDateProperty: string;
   createdDateProperty: string;
   momentFormat: string;
   storeHistoryLog: boolean;
@@ -19,8 +20,9 @@ export interface FrontmatterModifiedSettings {
 }
 
 export const DEFAULT_SETTINGS: FrontmatterModifiedSettings = {
-  frontmatterProperty: 'modified',
-  createdDateProperty: '',
+  modifiedDateProperty: 'modified',
+  historyDateProperty: 'edits';
+  createdDateProperty: 'created',
   momentFormat: '',
   storeHistoryLog: false,
   historyNewestFirst: false,
@@ -53,9 +55,9 @@ export class FrontmatterModifiedSettingTab extends PluginSettingTab {
       .setDesc('The name of the YAML/frontmatter property to update when your note is modified')
       .addText(text => text
         .setPlaceholder('modified')
-        .setValue(this.plugin.settings.frontmatterProperty)
+        .setValue(this.plugin.settings.modifiedDateProperty)
         .onChange(async value => {
-          this.plugin.settings.frontmatterProperty = value
+          this.plugin.settings.modifiedDateProperty = value
           await this.plugin.saveSettings()
         }))
     // Created date property
@@ -67,6 +69,17 @@ export class FrontmatterModifiedSettingTab extends PluginSettingTab {
         .setValue(this.plugin.settings.createdDateProperty)
         .onChange(async value => {
           this.plugin.settings.createdDateProperty = value
+          await this.plugin.saveSettings()
+        }))
+    // History dates property
+    new Setting(containerEl)
+      .setName('History dates property')
+      .setDesc('The name of the YAML/frontmatter property to append to when your note is modified')
+      .addText(text => text
+        .setPlaceholder('edits')
+        .setValue(this.plugin.settings.historyDateProperty)
+        .onChange(async value => {
+          this.plugin.settings.historyDateProperty = value
           await this.plugin.saveSettings()
         }))
 
@@ -85,7 +98,7 @@ export class FrontmatterModifiedSettingTab extends PluginSettingTab {
     // Store history as list or single value
     new Setting(containerEl)
       .setName('Store history of all updates')
-      .setDesc(`Instead of storing only the last modified time, this will turn your "${this.plugin.settings.frontmatterProperty}" frontmatter property into a list of all of the dates/times you've edited this note.`)
+      .setDesc(`Instead of storing only the last modified time, this will turn your "${this.plugin.settings.modifiedDateProperty}" frontmatter property into a list of all of the dates/times you've edited this note.`)
       .addToggle(toggle => {
         toggle
           .setValue(this.plugin.settings.storeHistoryLog)
