@@ -21,7 +21,7 @@ export interface FrontmatterModifiedSettings {
 
 export const DEFAULT_SETTINGS: FrontmatterModifiedSettings = {
   modifiedDateProperty: 'modified',
-  historyDateProperty: 'edits';
+  historyDateProperty: 'edits',
   createdDateProperty: 'created',
   momentFormat: '',
   storeHistoryLog: false,
